@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_17_020626) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_18_114735) do
+  create_table "bookings", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.datetime "start"
+    t.datetime "end"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "provider", default: "email", null: false
     t.string "uid", default: "", null: false

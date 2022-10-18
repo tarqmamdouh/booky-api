@@ -3,5 +3,7 @@ Rails.application.routes.draw do
 
   # sessions
   get 'sessions/alive'
-  
+
+  # booking
+  resources :bookings, except: [:destroy, :update]
 end
