@@ -55,3 +55,7 @@ gem "rack-cors", "~> 1.1"
 gem "faker", "~> 2.23"
 
 gem "jsonapi-serializer", "~> 2.2"
+
+gem "rspec", "~> 3.11"
+
+gem "rspec-rails", "~> 6.0"
