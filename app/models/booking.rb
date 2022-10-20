@@ -1,6 +1,35 @@
 class Booking < ApplicationRecord
   belongs_to :user
 
+  # Thread-Safe record creation
+  # so we make sure bookings are not duplicated and not overlapped
+  def self.safe_create(params)
+    # we can improve this by adding queueing systems
+    $db_thread.synchronize do
+      # declare starting/ending dates
+      start_at = DateTime.parse(params[:start])
+      end_at = DateTime.parse(params[:end])
+
+      # Return error if this slot overlapped with recently booked slots
+      return [false, ['The selected slot is overlapping with a booked slot, please try again']] if slot_overlaps?(params[:date], start_at, end_at)
+
+      booking = new(
+        {
+          name: params[:name],
+          description: params[:description],
+          start: start_at,
+          end: end_at,
+          user_id: params[:user_id].to_i
+        }
+      )
+
+      return [true, booking] if booking.save
+
+      # return an error
+      return [false, booking.errors]
+    end
+  end
+
   # Get free and non reserved/booked times for a specific day
   def self.free_times(date, interval = 15)
     # collect all reserved times given
@@ -62,5 +91,17 @@ class Booking < ApplicationRecord
 
       slots << [slot_start_at, slot_ending_at] if slot_ending_at <= ending_at
     end
+  end
+
+  # check if the slot overlap with any reserved slots
+  def self.slot_overlaps?(date, start_at, end_at)
+    reserved_times = reservations(date)
+
+    overlaps = reserved_times.select do |reserved_time|
+      (start_at.to_datetime <= reserved_time[1].to_datetime) &&
+        (reserved_time[0].to_datetime <= end_at.to_datetime)
+    end
+
+    !overlaps.empty?
   end
 end

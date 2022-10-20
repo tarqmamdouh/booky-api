@@ -1,26 +1,32 @@
 class BookingsController < ApplicationController
+  # before_action :authenticate_user!
   before_action :set_booking, only: :show
 
   # GET /bookings
   def index
-    @bookings = Booking.all
-
-    render json: @bookings
+    render json: Booking.free_times(params[:date], params[:interval].to_i)
   end
 
   # GET /bookings/1
   def show
-    render json: @booking
+    render json: format_booking(@booking)
   end
 
   # POST /bookings
   def create
-    @booking = Booking.new(booking_params)
+    success, result = Booking.safe_create(
+      booking_params.merge(
+        {
+          interval: params[:interval],
+          date: params[:date]
+        }
+      )
+    )
 
-    if @booking.save
-      render json: @booking, status: :created, location: @booking
+    if success
+      render json: format_booking(result), status: :created, location: @booking
     else
-      render json: @booking.errors, status: :unprocessable_entity
+      render json: result, status: :unprocessable_entity
     end
   end
 
@@ -34,5 +40,9 @@ class BookingsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def booking_params
     params.require(:booking).permit(:name, :description, :start, :end, :user_id)
+  end
+
+  def format_booking(booking)
+    BookingSerializer.new(booking).serializable_hash
   end
 end
