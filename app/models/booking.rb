@@ -34,7 +34,13 @@ class Booking < ApplicationRecord
   def self.free_times(date, interval = 15)
     # collect all reserved times given
     reserved_times = reservations(date)
-    return if reserved_times.empty?
+
+    # return all slots as no reservations in this day
+    return slots_between(
+      DateTime.parse("#{date} 12:00:00AM"),
+      DateTime.parse("#{date} 11:59:59PM"),
+      interval
+    ) if reserved_times.empty?
 
     # each reserved slot contains the following [start_at, end_at]
     # loop through sorted reserved slots and do the following:
@@ -67,13 +73,20 @@ class Booking < ApplicationRecord
     )
   end
 
+  # Remove reservations for specific date
+  def self.delete_reserved(date)
+    day_start_at = date.to_date + Time.parse('12:00AM').seconds_since_midnight.seconds
+    day_end_at = date.to_date + Time.parse('11:59:59PM').seconds_since_midnight.seconds
+    where('start > ? AND end < ?', day_start_at, day_end_at).delete_all
+  end
+
   # day starts at 12:00:00 AM and ends At 11:59:59 PM
   # get all -confirmed- reservations from the database
   # date: (string) a YYYY-MM-DD formatted date to look at
   def self.reservations(date)
     day_start_at = date.to_date + Time.parse('12:00AM').seconds_since_midnight.seconds
     day_end_at = date.to_date + Time.parse('11:59:59PM').seconds_since_midnight.seconds
-    where('start > ? AND end < ?', day_start_at, day_end_at).sort_by(&:start).pluck(:start, :end)
+    where('start >= ? AND end <= ?', day_start_at, day_end_at).sort_by(&:start).pluck(:start, :end)
   end
 
   # Find all available slots given
@@ -83,6 +96,7 @@ class Booking < ApplicationRecord
   def self.slots_between(starting_at, ending_at, interval)
     # calculate how many slots available
     intervals_num = ((starting_at - ending_at).abs * 24 * 60).to_i / interval
+    return [] if intervals_num.zero?
 
     # loop using numbers and generate slots
     (1..intervals_num).each_with_object([]) do |n, slots|
@@ -98,8 +112,8 @@ class Booking < ApplicationRecord
     reserved_times = reservations(date)
 
     overlaps = reserved_times.select do |reserved_time|
-      (start_at.to_datetime <= reserved_time[1].to_datetime) &&
-        (reserved_time[0].to_datetime <= end_at.to_datetime)
+      (start_at.to_datetime < reserved_time[1].to_datetime) &&
+        (reserved_time[0].to_datetime < end_at.to_datetime)
     end
 
     !overlaps.empty?

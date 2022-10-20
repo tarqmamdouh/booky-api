@@ -1,10 +1,10 @@
 class BookingsController < ApplicationController
-  # before_action :authenticate_user!
+  before_action :authenticate_user!
   before_action :set_booking, only: :show
 
   # GET /bookings
   def index
-    render json: Booking.free_times(params[:date], params[:interval].to_i)
+    render json: Booking.free_times(params[:date], params[:interval].to_i).to_a
   end
 
   # GET /bookings/1
