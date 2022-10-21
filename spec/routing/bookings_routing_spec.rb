@@ -14,16 +14,8 @@ RSpec.describe BookingsController, type: :routing do
       expect(post: "/bookings").to route_to("bookings#create")
     end
 
-    it "routes to #update via PUT" do
-      expect(put: "/bookings/1").to route_to("bookings#update", id: "1")
-    end
-
-    it "routes to #update via PATCH" do
-      expect(patch: "/bookings/1").to route_to("bookings#update", id: "1")
-    end
-
-    it "routes to #destroy" do
-      expect(delete: "/bookings/1").to route_to("bookings#destroy", id: "1")
+    it "routes to #mybookings" do
+      expect(get: "/mybookings").to route_to("bookings#mybookings")
     end
   end
 end

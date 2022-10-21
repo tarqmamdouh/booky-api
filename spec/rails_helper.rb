@@ -38,6 +38,19 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  # Include FactoryBot stuff
+  config.include FactoryBot::Syntax::Methods
+  config.before(:suite) do
+    Faker::Config.locale = 'en'
+  end
+
+  # Add Shoulda matchers context
+  config.include(Shoulda::Matchers::ActiveModel, type: :model)
+  config.include(Shoulda::Matchers::ActiveRecord, type: :model)
+
+  # Add devise helpers
+  config.include Devise::Test::IntegrationHelpers, type: :request
+
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
 

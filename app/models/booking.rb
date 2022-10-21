@@ -1,5 +1,8 @@
 class Booking < ApplicationRecord
   belongs_to :user
+  validates :start, presence: true
+  validates :end, presence: true
+  validates_uniqueness_of :start, scope: :end
 
   # Thread-Safe record creation
   # so we make sure bookings are not duplicated and not overlapped

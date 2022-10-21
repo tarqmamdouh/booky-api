@@ -44,7 +44,13 @@ end
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
-  gem "pry"
+end
+
+group :test do
+  gem "factory_bot_rails", "~> 6.2"
+  gem "rspec", "~> 3.11"
+  gem "rspec-rails", "~> 6.0"
+  gem 'shoulda-matchers', '~> 5.0'
 end
 
 gem "devise", "~> 4.8"
@@ -57,6 +63,4 @@ gem "faker", "~> 2.23"
 
 gem "jsonapi-serializer", "~> 2.2"
 
-gem "rspec", "~> 3.11"
-
-gem "rspec-rails", "~> 6.0"
+gem "pry"
