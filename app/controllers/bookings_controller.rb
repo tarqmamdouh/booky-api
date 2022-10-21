@@ -30,6 +30,12 @@ class BookingsController < ApplicationController
     end
   end
 
+  # GET /bookings/mybookings
+  def mybookings
+    bookings = Booking.where(user_id: params[:user_id])
+    render json: format_booking(bookings)
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

@@ -6,4 +6,5 @@ Rails.application.routes.draw do
 
   # booking
   resources :bookings, except: [:destroy, :update]
+  get 'mybookings', to: 'bookings#mybookings'
 end
