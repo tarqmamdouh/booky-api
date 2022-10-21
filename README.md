@@ -1,4 +1,4 @@
-# README
+# Booky API
 
 This repository is a Rails 7 application, configured as a pure API. 
 
