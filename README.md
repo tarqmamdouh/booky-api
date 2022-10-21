@@ -1,24 +1,15 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This repository is a Rails 7 application, configured as a pure API. 
 
-Things you may want to cover:
+It supports users, Bookings. Database is sqlite3.
 
-* Ruby version
+This API is specially designed to work with React on the front-end: requests and responses are conformed to JSON:API.
 
-* System dependencies
+To run the application, use the following commands:
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
+bundle
+rake db:create db:migrate db:seed
+rails s
+```
